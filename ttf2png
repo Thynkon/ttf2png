@@ -1,0 +1,41 @@
+#! /usr/bin/python3
+
+import sys, fontforge, os.path
+
+def usage():
+    print("{0} usage: ".format(program_name))
+    print("{0} <ttf file> [<folder containing png files name>]".format(program_name))
+
+def main():
+    argc = len(sys.argv)
+    program_name = sys.argv[0]
+
+    if argc < 2 or argc > 3:
+        usage()
+        sys.exit(1)
+
+    ttf_file = sys.argv[1]
+
+    if argc == 2:
+        folder_containing_png = os.path.splitext(ttf_file)[0].split('/')[-1]
+    else:
+        folder_containing_png = sys.argv[2]
+
+    if not os.path.exists(folder_containing_png):
+        os.mkdir(folder_containing_png)
+
+    if not os.path.isfile(ttf_file):
+        print("{0} does not exist".format(ttf_file))
+        sys.exit(1)
+
+    F = fontforge.open(ttf_file)
+
+    os.chdir(folder_containing_png)
+    for name in F:
+        filename = name + ".png"
+        F[name].export(filename)
+
+    sys.exit(0)
+
+if __name__ == "__main__":
+    main()
